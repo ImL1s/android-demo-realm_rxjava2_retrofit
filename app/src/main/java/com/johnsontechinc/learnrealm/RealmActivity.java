@@ -6,8 +6,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.johnsontechinc.learnrealm.model.UserRealm;
 
@@ -30,6 +32,8 @@ public class RealmActivity extends AppCompatActivity {
     private BaseAdapter adapter;
     private Button btn_load;
     private Button btn_clear;
+    private Button btn_ed;
+    private EditText ed_id;
 
 
     @Override
@@ -40,7 +44,9 @@ public class RealmActivity extends AppCompatActivity {
 
         btn_load = (Button) findViewById(R.id.btn_load);
         btn_clear = (Button) findViewById(R.id.btn_clear);
+        btn_ed = (Button) findViewById(R.id.btn_ed);
         listView = (ListView) findViewById(R.id.lv_display);
+        ed_id = (EditText) findViewById(R.id.ed_id);
 
         adapter = new BaseAdapter() {
             @Override
@@ -78,6 +84,20 @@ public class RealmActivity extends AppCompatActivity {
         refreshMockData();
 
         btn_load.setOnClickListener(v -> loadDataFromRealm());
+
+        btn_ed.setOnClickListener(v -> {
+            int id = Integer.parseInt(ed_id.getText().toString().trim());
+            for (UserRealm user : userList) {
+                if (user.getId() == id) {
+                    realm.beginTransaction();
+                    user.setName("HelloWorld");
+                    realm.commitTransaction();
+                    adapter.notifyDataSetChanged();
+                    Toast.makeText(RealmActivity.this, "Changed", Toast.LENGTH_SHORT).show();
+                    break;
+                }
+            }
+        });
 
         btn_clear.setOnClickListener(v -> clearData());
 
